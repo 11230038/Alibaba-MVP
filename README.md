@@ -76,7 +76,7 @@ npm run dev
 启动后访问：
 
 ```text
-http://localhost:3000
+http://localhost:3001
 ```
 
 ### 4. 构建生产包

@@ -42,7 +42,11 @@ export function GenericCard({ card }) {
           <Typography.Text strong>{card.title}</Typography.Text>
           <div className="muted-text">{card.subtitle}</div>
           <p>{card.body}</p>
-          {card.actionUrl && <Button size="small" type="link">查看动作</Button>}
+          {card.actionUrl && (
+            <Button size="small" type="link" href={card.actionUrl} target="_blank" rel="noreferrer">
+              查看动作
+            </Button>
+          )}
         </div>
       </Space>
     </Card>

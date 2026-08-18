@@ -4,6 +4,8 @@ function AnalyticsTrendChart({ data, height = 220 }) {
   const [activeIndex, setActiveIndex] = useState(null);
 
   const chart = useMemo(() => {
+    if (!data.length) return null;
+
     const width = 720;
     const padding = { top: 20, right: 24, bottom: 38, left: 34 };
     const innerWidth = width - padding.left - padding.right;
@@ -22,8 +24,27 @@ function AnalyticsTrendChart({ data, height = 220 }) {
     const areaPath = `${linePath} L ${points[points.length - 1].x} ${padding.top + innerHeight} L ${points[0].x} ${padding.top + innerHeight} Z`;
     const gridLines = [0, 0.5, 1].map((ratio) => padding.top + innerHeight - ratio * innerHeight);
 
-    return { width, padding, innerHeight, maxValue, points, linePath, areaPath, gridLines };
+    return { width, padding, innerHeight, maxValue, points, linePath, areaPath, gridLines, firstValue: points[0].value };
   }, [data, height]);
+
+  if (!chart) {
+    return (
+      <div className="analytics-trend-chart empty-state">
+        <div className="trend-chart-head">
+          <div>
+            <div className="trend-chart-kicker">捕获趋势</div>
+            <div className="trend-chart-value">暂无趋势数据</div>
+          </div>
+        </div>
+        <div className="trend-chart-table" aria-label="卡片捕获趋势明细">
+          <div className="trend-chart-row">
+            <span>当前无可展示数据</span>
+            <strong>—</strong>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const activePoint = activeIndex === null ? chart.points[chart.points.length - 1] : chart.points[activeIndex];
 

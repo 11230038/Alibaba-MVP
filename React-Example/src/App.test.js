@@ -8,5 +8,5 @@ test('renders supplier console navigation', () => {
       <App />
     </MemoryRouter>
   );
-  expect(screen.getByText(/把会话和卡片捕获汇总到一个运营驾驶舱/i)).toBeInTheDocument();
+  expect(screen.getByText(/实时汇聚客户会话、Agent 决策与业务卡片的运营驾驶舱/i)).toBeInTheDocument();
 });

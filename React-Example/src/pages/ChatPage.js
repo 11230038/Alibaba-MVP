@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { marked } from 'marked';
+import AnalysisMarkdown from '../components/AnalysisMarkdown';
 import {
   Avatar,
   Button,
@@ -262,20 +262,6 @@ function CustomerInfo({ customer, avatar }) {
         </Descriptions>
       </SectionCard>
     </div>
-  );
-}
-
-function AnalysisMarkdown({ content }) {
-  const html = marked.parse(content || '暂无分析结果。', {
-    breaks: true,
-    gfm: true,
-  });
-
-  return (
-    <div
-      className="analysis-markdown"
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
   );
 }
 

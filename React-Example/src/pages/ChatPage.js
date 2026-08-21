@@ -29,6 +29,8 @@ import {
   DownloadOutlined,
   FlagOutlined,
   GlobalOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
   ProfileOutlined,
   ReloadOutlined,
   SendOutlined,
@@ -48,41 +50,78 @@ import {
 
 const { TextArea } = Input;
 
-function ConversationList({ selectedId, onSelect }) {
+function ConversationList({ selectedId, onSelect, collapsed, onToggleCollapse, id }) {
   const groups = groupConversationsByTime(conversations);
+  const toggleLabel = collapsed ? '展开客户会话' : '收起客户会话';
+  const toggleIcon = collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />;
+
   return (
-    <div className="conversation-panel">
-      <Typography.Title level={5}>客户会话</Typography.Title>
-      <Typography.Text type="secondary">按更新时间聚合重点客户，优先处理未读与高价值对话。</Typography.Text>
-      {groups.map((group) => (
-        <div key={group.key} className="conversation-group">
-          <div className="group-title">{group.title}</div>
-          <List
-            dataSource={group.items}
-            renderItem={(item) => (
-              <List.Item
-                className={`conversation-item ${selectedId === item.id ? 'active' : ''}`}
-                onClick={() => onSelect(item.id)}
-              >
-                <List.Item.Meta
-                  avatar={<Avatar src={item.avatar}>{item.name[0]}</Avatar>}
-                  title={<Space><span>{item.name}</span><StatusTag status={item.status} /></Space>}
-                  description={(
-                    <div>
-                      <div className="ellipsis">{item.lastMessage}</div>
-                      <Space size="small" className="muted-text">
-                        <span>{relativeTime(item.updatedAt)}</span>
-                        <span>{item.messageCount} 条</span>
-                        {item.unread > 0 && <Tag color="red">{item.unread} 未读</Tag>}
-                      </Space>
-                    </div>
-                  )}
-                />
-              </List.Item>
-            )}
+    <div className={`conversation-panel ${collapsed ? 'conversation-panel-collapsed' : ''}`} id={id}>
+      {collapsed ? (
+        <div className="conversation-panel-rail">
+          <Button
+            type="text"
+            size="small"
+            className="conversation-panel-toggle"
+            icon={toggleIcon}
+            aria-label={toggleLabel}
+            aria-expanded={!collapsed}
+            aria-controls={id}
+            title={toggleLabel}
+            onClick={onToggleCollapse}
           />
+          <Typography.Text className="conversation-panel-rail-label" type="secondary">客户会话</Typography.Text>
         </div>
-      ))}
+      ) : (
+        <>
+          <div className="conversation-panel-head">
+            <div>
+              <Typography.Title level={5}>客户会话</Typography.Title>
+              <Typography.Text type="secondary">按更新时间聚合重点客户，优先处理未读与高价值对话。</Typography.Text>
+            </div>
+            <Button
+              type="text"
+              size="small"
+              className="conversation-panel-toggle"
+              icon={toggleIcon}
+              aria-label={toggleLabel}
+              aria-expanded={!collapsed}
+              aria-controls={id}
+              title={toggleLabel}
+              onClick={onToggleCollapse}
+            />
+          </div>
+          {groups.map((group) => (
+            <div key={group.key} className="conversation-group">
+              <div className="group-title">{group.title}</div>
+              <List
+                dataSource={group.items}
+                renderItem={(item) => (
+                  <List.Item
+                    className={`conversation-item ${selectedId === item.id ? 'active' : ''}`}
+                    onClick={() => onSelect(item.id)}
+                  >
+                    <List.Item.Meta
+                      avatar={<Avatar src={item.avatar}>{item.name[0]}</Avatar>}
+                      title={<Space><span>{item.name}</span><StatusTag status={item.status} /></Space>}
+                      description={(
+                        <div>
+                          <div className="ellipsis">{item.lastMessage}</div>
+                          <Space size="small" className="muted-text">
+                            <span>{relativeTime(item.updatedAt)}</span>
+                            <span>{item.messageCount} 条</span>
+                            {item.unread > 0 && <Tag color="red">{item.unread} 未读</Tag>}
+                          </Space>
+                        </div>
+                      )}
+                    />
+                  </List.Item>
+                )}
+              />
+            </div>
+          ))}
+        </>
+      )}
     </div>
   );
 }
@@ -348,6 +387,7 @@ function ChatPage() {
   const [suggestionLoading, setSuggestionLoading] = useState(false);
   const [analysis, setAnalysis] = useState({ open: false, title: '', loading: false, content: '', type: '' });
   const [batchSelected, setBatchSelected] = useState([]);
+  const [conversationPanelCollapsed, setConversationPanelCollapsed] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
   const selectedConversation = useMemo(() => conversations.find((item) => item.id === selectedId), [selectedId]);
@@ -360,6 +400,7 @@ function ChatPage() {
   };
 
   const setDraft = (value) => setDrafts((items) => ({ ...items, [selectedId]: value }));
+  const toggleConversationPanel = () => setConversationPanelCollapsed((collapsed) => !collapsed);
 
   const translate = async (retranslate = false) => {
     setTranslationLoading(true);
@@ -482,9 +523,15 @@ function ChatPage() {
   ];
 
   return (
-    <div className="chat-page">
+    <div className={`chat-page ${conversationPanelCollapsed ? 'conversation-panel-collapsed' : ''}`}>
       {contextHolder}
-      <ConversationList selectedId={selectedId} onSelect={selectConversation} />
+      <ConversationList
+        id="conversation-panel"
+        selectedId={selectedId}
+        onSelect={selectConversation}
+        collapsed={conversationPanelCollapsed}
+        onToggleCollapse={toggleConversationPanel}
+      />
       <div className="chat-main">
         <Card className="section-card">
           <Tabs items={tabItems} />

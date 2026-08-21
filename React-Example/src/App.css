@@ -1053,6 +1053,10 @@
   animation: page-rise 0.5s var(--ease-out) both;
 }
 
+.chat-page.conversation-panel-collapsed {
+  grid-template-columns: 64px minmax(0, 1fr);
+}
+
 .conversation-panel {
   position: relative;
   height: 100%;
@@ -1066,8 +1070,68 @@
   backdrop-filter: blur(12px);
 }
 
-.conversation-panel h5 {
+.conversation-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.conversation-panel-head h5 {
   margin: 0 0 4px !important;
+}
+
+.conversation-panel-head .ant-typography-secondary {
+  color: var(--text-muted) !important;
+  line-height: 1.6;
+}
+
+.conversation-panel-toggle {
+  flex: none;
+  border-radius: 999px !important;
+  color: #3b82f6 !important;
+  background: #eff6ff !important;
+  box-shadow: var(--shadow-xs);
+}
+
+.conversation-panel-toggle:hover {
+  color: #1d4ed8 !important;
+  background: #dbeafe !important;
+}
+
+.conversation-panel-collapsed {
+  padding: 14px 10px;
+  overflow: hidden;
+}
+
+.conversation-panel-collapsed .conversation-panel-head,
+.conversation-panel-collapsed .conversation-group {
+  display: none;
+}
+
+.conversation-panel-rail {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.conversation-panel-rail-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.conversation-panel-collapsed .conversation-panel-toggle {
+  width: 38px;
+  height: 38px;
 }
 
 .conversation-group {
@@ -1112,6 +1176,7 @@
 }
 
 .chat-main {
+
   min-width: 0;
   min-height: 0;
   overflow: hidden;
@@ -3001,8 +3066,30 @@
     grid-template-columns: 1fr;
   }
 
+  .chat-page.conversation-panel-collapsed {
+    grid-template-columns: 1fr;
+  }
+
   .conversation-panel {
     max-height: 420px;
+  }
+
+  .conversation-panel-collapsed {
+    min-height: 72px;
+    max-height: 72px;
+    padding: 10px 12px;
+  }
+
+  .conversation-panel-collapsed .conversation-panel-rail {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .conversation-panel-collapsed .conversation-panel-rail-label {
+    writing-mode: horizontal-tb;
+    transform: none;
+    letter-spacing: 0.08em;
   }
 
   .chat-main {
